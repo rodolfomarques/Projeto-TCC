@@ -1,0 +1,48 @@
+Visão Inicial 
+
+Criação do web app como uma extensão do formulário
+proposto pelo IPHAN. Exibição do mapa, com a localização
+na tela, que permite ao usuário ver as informações
+registradas: o conteúdo é basicamente texto, exibido em
+forma de tópicos. A inserção do conteúdo é feita
+exclusivamente através de texto, em forma de formulário.
+
+requerimentos
+
+- Criação do projeto
+- Inserção de mapa
+- inserção dos pontos catalogados
+- Tela para exibição dos textos
+- formulário para inserir os texto
+- Seleção das tecnologias e ferramentas de desenvolvimento
+necessárias para o projeto
+- Esboço de interface gráfica para o sistema
+
+Primeira Iteração
+
+A aplição precisa ganhar uma estrutura 
+multimídia. Ela precisa se tornar uma plataforma
+onde os usuário possam criar micro histórias acerca
+do bem inventariado. Os tópicos que o IPHAN emprega
+na sua metodologia devem ser cobertos de forma coletiva,
+se valendo não só do registro textual, mas também do 
+registro visual (fotos) e do registro sonoro (audio).
+
+Os tópicos são agrupado através de categorias, no formulário
+do IPHAN. A idéia agora é se valer destas catagorias para
+propor a composição da interface. Os dados catalogados
+poderam ser acessado em forma de texto, audio e galeria
+de fotos, permitindo que o usuário tenha diferentes 
+percepções sobre o bem inventariado.
+
+requerimentos
+
+- Criar componente para marcar a posição do usuário => OK
+- Criar componente para inserir texto
+- Criar componente para inserir audio
+- Selecionar icones para as categorias de conteúdo
+- Ao selecionar o botão de uma categoria de conteúdo
+o usuário tem acesso aos tópicos da categoria e pode
+ouvir um audio ou ler um texto sobre o tópico
+- Adicionar menu rápido
+	- Adicionar local

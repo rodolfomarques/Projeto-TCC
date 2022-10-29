@@ -1,0 +1,50 @@
+#root {
+    height: 100vh;
+    width: 100vw;
+}
+
+.leaflet-container {
+    width: 100%;
+    height: 100%;
+}
+
+.leaflet-div-icon {
+
+    background-color: #ffffff00;
+    border: unset;
+
+}
+
+.myLocationIcon {
+
+    filter: invert(48%) sepia(50%) saturate(10038%) hue-rotate(335deg) brightness(92%) contrast(102%);
+
+}
+
+.place_icon {
+
+    filter: invert(48%) sepia(50%) saturate(10038%) hue-rotate(118deg) brightness(92%) contrast(102%);
+
+}
+
+.newPlaceFormContainer {
+
+    padding-top: 10px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+}
+
+
+.mainContentButtonsGroup > button {
+   margin-right: 5px;
+
+}
+
+.textCard {
+
+    margin-bottom: 10px;
+    background-color: rgb(234, 250, 250) !important;
+
+}
