@@ -7,6 +7,7 @@ import PlaceMarker from '../../components/PlaceMarker/PlaceMarker';
 import NewPlaceForm from '../../components/NewPlaceForm/NewPlaceForm';
 import StreetDetails from '../StreetDetails/StreetDetails'
 
+
 const inicialPlaces = [
     {
         id: 1,
@@ -27,6 +28,7 @@ const inicialPlaces = [
                         author: 'Rodolfo Marques',
                         role: 'Administrador',
                         timestamp: '29/10/2022',
+                        category: 'Elementos de construção',
                         content: `Informe as principais pessoas envolvidas com o lugar.
                         O construtor, o proprietário, o responsável pela manutenção, as pessoas que usufruem do
                         espaço, entre outros. Informe quais são os elementos presentes no ambiente natural.
@@ -34,7 +36,17 @@ const inicialPlaces = [
                         descampado etc.`
                     },
                 ],
-                audioContent: []
+                audioContent: [
+                    {
+                        id: 1,
+                        author: 'Rodolfo Marques',
+                        role: 'Administrador',
+                        timestamp: '29/10/2022',
+                        category: 'Elementos de construção',
+                        title: 'Teste de componente',
+                        content: `/audio/audio_test.mp3`
+                    },
+                ]
             },
             descricao: {
                 textContent: [

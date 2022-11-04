@@ -1,17 +1,19 @@
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import TextDisplayCard from '../../components/TextDisplayCard/TextDisplayCard';
+import AudioDisplayCard from '../../components/AudioDisplayCard/AudioDisplayCard';
+import AddContentBar from '../../components/AddContentBar/AddContentBar';
+import AudioRecorder from '../../components/AudioRecorder/AudioRecorder';
+import TextWriter from '../../components/TextWriter/TextWriter';
 import PropTypes from 'prop-types';
-
 
 
 const StreetDetails = ({open, setOpen, contentSelector, content}) => {
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-
+    const [ openAudioRecorder, setOpenAudioRecorder ] = useState(false);
+    const [ openWriter, setOpenWriter] = useState(false);
+    const handleClose = () => { setOpen(false); };
     const descriptionElementRef = useRef(null);
     
     useEffect(() => {
@@ -43,12 +45,30 @@ const StreetDetails = ({open, setOpen, contentSelector, content}) => {
                             <h3>História</h3>
                             {
                                 content.historia.textContent.map((text, i) => {
-                                    return (<TextDisplayCard key={`card-${i}`} autor={text.author} texto={text.content} papel={text.role} timestamp={text.timestamp} />)
+                                    return (
+                                        <TextDisplayCard 
+                                            key={`card-${i}`} 
+                                            autor={text.author} 
+                                            texto={text.content} 
+                                            category={text.category} 
+                                            papel={text.role} 
+                                            timestamp={text.timestamp} 
+                                        />
+                                    )
                                 })
                             }
                             {
-                                content.historia.audioContent.map((text, i) => {
-                                    return (<TextDisplayCard key={`card-${i}`} autor={text.author} texto={text.content} papel={text.role} timestamp={text.timestamp} />)
+                                content.historia.audioContent.map((audio, i) => {
+                                    return (
+                                        <AudioDisplayCard 
+                                            key={`card-${i}`} 
+                                            autor={audio.author} 
+                                            audio={audio.content} 
+                                            category={audio.category} 
+                                            papel={audio.role} 
+                                            timestamp={audio.timestamp} 
+                                        />
+                                    )
                                 })
                             }
                         </section>
@@ -59,12 +79,12 @@ const StreetDetails = ({open, setOpen, contentSelector, content}) => {
                             <h3>Descrição</h3>
                             {
                                 content.descricao.textContent.map((text, i) => {
-                                    return (<TextDisplayCard key={`card-${i}`} autor={text.author} texto={text.content} papel={text.role} timestamp={text.timestamp} />)
+                                    return (<TextDisplayCard key={`card-${i}`} autor={text.author} texto={text.content} category={text.category} papel={text.role} timestamp={text.timestamp} />)
                                 })
                             }
                             {
-                                content.descricao.audioContent.map((text, i) => {
-                                    return (<TextDisplayCard key={`card-${i}`} autor={text.author} texto={text.content} papel={text.role} timestamp={text.timestamp} />)
+                                content.descricao.audioContent.map((audio, i) => {
+                                    return (<AudioDisplayCard key={`card-${i}`} autor={audio.author} audio={audio.content} category={audio.category} papel={audio.role} timestamp={audio.timestamp} />)
                                 })
                             }
                             {/* <p>
@@ -156,10 +176,13 @@ const StreetDetails = ({open, setOpen, contentSelector, content}) => {
                         </p>
                     </section> */}
                 </article>
+                <AddContentBar setOpenRecorder={setOpenAudioRecorder} setOpenWriter={setOpenWriter} />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Sair</Button>
             </DialogActions>
+            <AudioRecorder open={openAudioRecorder} setOpen={setOpenAudioRecorder} contentSelector={contentSelector} />
+            <TextWriter open={openWriter} setOpen={setOpenWriter} contentSelector={contentSelector}  />
         </Dialog>
     )
 
