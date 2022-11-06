@@ -32,7 +32,7 @@ const PlaceMarker = ({latitude, longitude, marker, content}) => {
                             variant="outlined" 
                             size='small' 
                             startIcon={<DescriptionIcon />}
-                            onClick={() => {setOpenStreetDetails(true); setContentSelector('descricao')}}
+                            onClick={() => {setContent(content); setOpenStreetDetails(true); setContentSelector('descricao')}}
                         > 
                             Descrição 
                         </Button>

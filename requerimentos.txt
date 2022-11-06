@@ -20,7 +20,7 @@ necessárias para o projeto
 
 Primeira Iteração
 
-A aplição precisa ganhar uma estrutura 
+A aplicação precisa ganhar uma estrutura 
 multimídia. Ela precisa se tornar uma plataforma
 onde os usuário possam criar micro histórias acerca
 do bem inventariado. Os tópicos que o IPHAN emprega

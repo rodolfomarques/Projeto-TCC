@@ -1,120 +1,14 @@
-import { useState, useEffect, createContext } from 'react'
-import SpeedDialButton from '../../components/Layout/SpeedDialButton';
-import { MapContainer, TileLayer } from 'react-leaflet'
+import { useState, useEffect, createContext, lazy, Suspense  } from 'react';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import { appRoutineLocationStarter } from '../../helpers/appRoutineLocationStarter';
-import MyLocationSpot from '../../components/MyLocationSpot/MyLocationSpot';
-import PlaceMarker from '../../components/PlaceMarker/PlaceMarker';
-import NewPlaceForm from '../../components/NewPlaceForm/NewPlaceForm';
-import StreetDetails from '../StreetDetails/StreetDetails'
+import { ref, onValue } from 'firebase/database';
+import db from '../../services/firebase';
 
-
-const inicialPlaces = [
-    {
-        id: 1,
-        latitude: -7.1191604053191915, 
-        longitude: -34.82359102543302,
-        marker: {
-            title: 'Busto de Tamandaré', 
-            description: `Cartão postal da cidade, muito visitado por turistas.
-            Acontece aqui as celebrações de ano novo da cidade. 
-            Este lugar foi criando para homenagear o patrono da marinha brasileira. 
-            O lugar é ponto de encontro da cidade.`
-        },
-        content: {
-            historia: {
-                textContent: [
-                    {
-                        id: 1,
-                        author: 'Rodolfo Marques',
-                        role: 'Administrador',
-                        timestamp: '29/10/2022',
-                        category: 'Elementos de construção',
-                        content: `Informe as principais pessoas envolvidas com o lugar.
-                        O construtor, o proprietário, o responsável pela manutenção, as pessoas que usufruem do
-                        espaço, entre outros. Informe quais são os elementos presentes no ambiente natural.
-                        As árvores, vegetação nativa, campo para pasto, rochedos, riachos, trepadeiras,
-                        descampado etc.`
-                    },
-                ],
-                audioContent: [
-                    {
-                        id: 1,
-                        author: 'Rodolfo Marques',
-                        role: 'Administrador',
-                        timestamp: '29/10/2022',
-                        category: 'Elementos de construção',
-                        title: 'Teste de componente',
-                        content: `/audio/audio_test.mp3`
-                    },
-                ]
-            },
-            descricao: {
-                textContent: [
-                    {
-                        id: 1,
-                        author: 'Rodolfo Marques',
-                        role: 'Administrador',
-                        timestamp: '29/10/2022',
-                        content: `Informe as principais pessoas envolvidas com o lugar.
-                        O construtor, o proprietário, o responsável pela manutenção, as pessoas que usufruem do
-                        espaço, entre outros. Informe quais são os elementos presentes no ambiente natural.
-                        As árvores, vegetação nativa, campo para pasto, rochedos, riachos, trepadeiras,
-                        descampado etc.`
-                    },
-                ],
-                audioContent: []
-            }
-        }
-    },
-    {
-        id: 2,
-        latitude: -7.113377040203341, 
-        longitude: -34.88853074539068, 
-        marker: {
-            title: 'Praça Antenor Navarro', 
-            description: 'Ponto turístico da cidade.'
-        },
-        content: {
-            historia: {
-                textContent: [
-                    {
-                        id: 1,
-                        author: 'Rodolfo Marques',
-                        role: 'Administrador',
-                        timestamp: '29/10/2022',
-                        content: `Informe as principais pessoas envolvidas com o lugar.
-                        O construtor, o proprietário, o responsável pela manutenção, as pessoas que usufruem do
-                        espaço, entre outros. Informe quais são os elementos presentes no ambiente natural.
-                        As árvores, vegetação nativa, campo para pasto, rochedos, riachos, trepadeiras,
-                        descampado etc.`
-                    },
-                ],
-                audioContent: [
-                    {}
-                ]
-            },
-            descricao: {
-                textContent: [
-                    {
-                        id: 1,
-                        author: 'Rodolfo Marques',
-                        role: 'Administrador',
-                        timestamp: '29/10/2022',
-                        content: `Informe as principais pessoas envolvidas com o lugar.
-                        O construtor, o proprietário, o responsável pela manutenção, as pessoas que usufruem do
-                        espaço, entre outros. Informe quais são os elementos presentes no ambiente natural.
-                        As árvores, vegetação nativa, campo para pasto, rochedos, riachos, trepadeiras,
-                        descampado etc.`
-                    },
-                ],
-                audioContent: [
-                    {}
-                ]
-            }
-        }
-    }
-]
-
+const SpeedDialButton = lazy(() => import('../../components/Layout/SpeedDialButton'));
+const MyLocationSpot = lazy(() => import('../../components/MyLocationSpot/MyLocationSpot'));
+const PlaceMarker = lazy(() => import('../../components/PlaceMarker/PlaceMarker'));
+const NewPlaceForm =  lazy(() => import('../../components/NewPlaceForm/NewPlaceForm'));
+const StreetDetails = lazy(() => import('../StreetDetails/StreetDetails'));
 
 
 export const ComponentContext = createContext()
@@ -123,7 +17,7 @@ const Home = () => {
 
     const [ userLatitude, setUserLatitude ] = useState(-7.119335);
     const [ userLongitude, setUserLongitude ] = useState(-34.823671);
-    const [ locations, setLocations ] = useState(inicialPlaces);
+    const [ locations, setLocations ] = useState([]);
     const [ openNewPlaceForm, setOpenNewPlaceForm ] = useState(false);
     const [ openStreetDetails, setOpenStreetDetails ] = useState(false);
     const [ contentSelector, setContentSelector ] = useState('');
@@ -132,6 +26,54 @@ const Home = () => {
     useEffect(() => {
 
         appRoutineLocationStarter(setUserLatitude, setUserLongitude);
+
+        onValue(ref(db), (snapshot) => {
+
+            console.log(snapshot.val());
+            const data = snapshot.val()
+            const places = data.place;
+            const markers = data.markers;
+            const historias = data.historia;
+            const descricoes = data.descricao;
+
+            const locations = [];
+
+            places.forEach(place => {
+                
+                let location;
+                const histTextContent = []
+                const histAudioContent = []
+                const desctTextContent = []
+                const descAudioContent = []
+                
+                const marker = markers.find(item => item["place-id"] === place["place-id"]? true: false);
+                historias.textContent.forEach(item => { if(item["place-id"] === place["place-id"]){ histTextContent.push(item) } })
+                historias.audioContent.forEach(item => { if(item["place-id"] === place["place-id"]){ histAudioContent.push(item) } })
+                descricoes.textContent.forEach(item => { if(item["place-id"] === place["place-id"]){ desctTextContent.push(item) } })
+                descricoes.audioContent.forEach(item => { if(item["place-id"] === place["place-id"]){ descAudioContent.push(item) } })
+
+                location = {
+                    ...place, 
+                    marker, 
+                    content: {
+                        historia: {
+                            textContent: [...histTextContent], 
+                            audioContent: [...histAudioContent] 
+                        },
+                        descricao: {
+                            textContent: [...desctTextContent], 
+                            audioContent: [...descAudioContent] 
+                        }
+                    } 
+                };
+
+                locations.push(location);
+
+            })
+
+            setLocations(locations)
+
+        })
 
     }, [])
 
@@ -149,23 +91,25 @@ const Home = () => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <MyLocationSpot latitude={userLatitude} longitude={userLongitude} />
-                {
-                    locations.map((location, i) => {
-                        return (
-                            <PlaceMarker 
-                                key={`place-marker-${i}`} 
-                                latitude={location.latitude} 
-                                longitude={location.longitude} 
-                                marker={location.marker} 
-                                content={location.content}
-                            />
-                        )
-                    })
-                }
-                <NewPlaceForm open={openNewPlaceForm} setOpen={setOpenNewPlaceForm} userLatitude={userLatitude} userLongitude={userLongitude} setLocations={setLocations} />
-                <StreetDetails open={ openStreetDetails} setOpen={setOpenStreetDetails} contentSelector={contentSelector} content={content} />
-                <SpeedDialButton />
+                <Suspense fallback={<div>Carregando...</div>} >
+                        <MyLocationSpot latitude={userLatitude} longitude={userLongitude} />
+                        {
+                            locations.map((location, i) => {
+                                return (
+                                    <PlaceMarker 
+                                        key={`place-marker-${i}`} 
+                                        latitude={location.latitude} 
+                                        longitude={location.longitude} 
+                                        marker={location.marker} 
+                                        content={location.content}
+                                    />
+                                )
+                            })
+                        }
+                        <NewPlaceForm open={openNewPlaceForm} setOpen={setOpenNewPlaceForm} userLatitude={userLatitude} userLongitude={userLongitude} setLocations={setLocations} />
+                        <StreetDetails open={openStreetDetails} setOpen={setOpenStreetDetails} contentSelector={contentSelector} content={content} />
+                        <SpeedDialButton />
+                </Suspense>
             </MapContainer>
         </ComponentContext.Provider>
     )

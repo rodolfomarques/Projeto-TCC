@@ -201,7 +201,7 @@ StreetDetails.propTypes = {
             audioContent: PropTypes.array
         },
         descricao: {
-            extContent: PropTypes.array,
+            textContent: PropTypes.array,
             audioContent: PropTypes.array
         }
     }
