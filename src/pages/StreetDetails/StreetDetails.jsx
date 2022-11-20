@@ -1,6 +1,7 @@
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useContext } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { ComponentContext } from '../Home/Home';
 import TextDisplayCard from '../../components/TextDisplayCard/TextDisplayCard';
 import AudioDisplayCard from '../../components/AudioDisplayCard/AudioDisplayCard';
 import AddContentBar from '../../components/AddContentBar/AddContentBar';
@@ -9,10 +10,11 @@ import TextWriter from '../../components/TextWriter/TextWriter';
 import PropTypes from 'prop-types';
 
 
-const StreetDetails = ({open, setOpen, contentSelector, content}) => {
+const StreetDetails = ({open, setOpen, contentSelector, content, placeID}) => {
 
     const [ openAudioRecorder, setOpenAudioRecorder ] = useState(false);
     const [ openWriter, setOpenWriter] = useState(false);
+    const { reload } = useContext(ComponentContext);
     const handleClose = () => { setOpen(false); };
     const descriptionElementRef = useRef(null);
     
@@ -24,6 +26,8 @@ const StreetDetails = ({open, setOpen, contentSelector, content}) => {
         }
     }
     }, [open])
+
+    useEffect(() => {}, [reload])
 
     return (
 
@@ -181,8 +185,8 @@ const StreetDetails = ({open, setOpen, contentSelector, content}) => {
             <DialogActions>
                 <Button onClick={handleClose}>Sair</Button>
             </DialogActions>
-            <AudioRecorder open={openAudioRecorder} setOpen={setOpenAudioRecorder} contentSelector={contentSelector} />
-            <TextWriter open={openWriter} setOpen={setOpenWriter} contentSelector={contentSelector}  />
+            <AudioRecorder open={openAudioRecorder} setOpen={setOpenAudioRecorder} contentSelector={contentSelector} placeID={placeID} />
+            <TextWriter open={openWriter} setOpen={setOpenWriter} contentSelector={contentSelector} placeID={placeID}  />
         </Dialog>
     )
 
@@ -192,6 +196,7 @@ export default StreetDetails
 
 StreetDetails.propTypes = {
 
+    placeID: PropTypes.string,
     open: PropTypes.bool,
     setOpen: PropTypes.func,
     contentSelector: PropTypes.string,

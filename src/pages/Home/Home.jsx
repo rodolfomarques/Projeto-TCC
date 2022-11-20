@@ -1,8 +1,7 @@
 import { useState, useEffect, createContext, lazy, Suspense  } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import { appRoutineLocationStarter } from '../../helpers/appRoutineLocationStarter';
-import { ref, onValue } from 'firebase/database';
-import db from '../../services/firebase';
+import loadInicialData from '../../helpers/loadInitialData';
 
 const SpeedDialButton = lazy(() => import('../../components/Layout/SpeedDialButton'));
 const MyLocationSpot = lazy(() => import('../../components/MyLocationSpot/MyLocationSpot'));
@@ -22,58 +21,13 @@ const Home = () => {
     const [ openStreetDetails, setOpenStreetDetails ] = useState(false);
     const [ contentSelector, setContentSelector ] = useState('');
     const [ content, setContent ] = useState({})
+    const [ placeID, setPlaceID ] = useState('')
+    const [ reload, setReload ] =  useState('')
 
     useEffect(() => {
 
         appRoutineLocationStarter(setUserLatitude, setUserLongitude);
-
-        onValue(ref(db), (snapshot) => {
-
-            console.log(snapshot.val());
-            const data = snapshot.val()
-            const places = data.place;
-            const markers = data.markers;
-            const historias = data.historia;
-            const descricoes = data.descricao;
-
-            const locations = [];
-
-            places.forEach(place => {
-                
-                let location;
-                const histTextContent = []
-                const histAudioContent = []
-                const desctTextContent = []
-                const descAudioContent = []
-                
-                const marker = markers.find(item => item["place-id"] === place["place-id"]? true: false);
-                historias.textContent.forEach(item => { if(item["place-id"] === place["place-id"]){ histTextContent.push(item) } })
-                historias.audioContent.forEach(item => { if(item["place-id"] === place["place-id"]){ histAudioContent.push(item) } })
-                descricoes.textContent.forEach(item => { if(item["place-id"] === place["place-id"]){ desctTextContent.push(item) } })
-                descricoes.audioContent.forEach(item => { if(item["place-id"] === place["place-id"]){ descAudioContent.push(item) } })
-
-                location = {
-                    ...place, 
-                    marker, 
-                    content: {
-                        historia: {
-                            textContent: [...histTextContent], 
-                            audioContent: [...histAudioContent] 
-                        },
-                        descricao: {
-                            textContent: [...desctTextContent], 
-                            audioContent: [...descAudioContent] 
-                        }
-                    } 
-                };
-
-                locations.push(location);
-
-            })
-
-            setLocations(locations)
-
-        })
+        loadInicialData(setLocations)
 
     }, [])
 
@@ -81,7 +35,10 @@ const Home = () => {
         setOpenNewPlaceForm,
         setOpenStreetDetails,
         setContentSelector,
-        setContent
+        setContent,
+        setPlaceID,
+        reload, 
+        setReload,
     }
 
     return (
@@ -102,12 +59,13 @@ const Home = () => {
                                         longitude={location.longitude} 
                                         marker={location.marker} 
                                         content={location.content}
+                                        placeID={location.marker["place-id"]}
                                     />
                                 )
                             })
                         }
-                        <NewPlaceForm open={openNewPlaceForm} setOpen={setOpenNewPlaceForm} userLatitude={userLatitude} userLongitude={userLongitude} setLocations={setLocations} />
-                        <StreetDetails open={openStreetDetails} setOpen={setOpenStreetDetails} contentSelector={contentSelector} content={content} />
+                        <NewPlaceForm open={openNewPlaceForm} setOpen={setOpenNewPlaceForm} userLatitude={userLatitude} userLongitude={userLongitude} />
+                        <StreetDetails open={openStreetDetails} setOpen={setOpenStreetDetails} contentSelector={contentSelector} content={content} placeID={placeID} />
                         <SpeedDialButton />
                 </Suspense>
             </MapContainer>

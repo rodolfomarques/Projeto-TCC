@@ -9,9 +9,9 @@ import pinLocation from '../../assets/images/pin-location.svg'
 import HistoryIcon from '@mui/icons-material/History';
 import DescriptionIcon from '@mui/icons-material/Description';
 
-const PlaceMarker = ({latitude, longitude, marker, content}) => {
+const PlaceMarker = ({latitude, longitude, marker, content, placeID}) => {
 
-    const { setOpenStreetDetails, setContentSelector, setContent } = useContext(ComponentContext)
+    const { setOpenStreetDetails, setContentSelector, setContent, setPlaceID } = useContext(ComponentContext)
 
     return (
         <Marker position={[latitude, longitude]} icon={leafleatIcon(pinLocation, 35, 35, 'place_icon')}>
@@ -24,7 +24,7 @@ const PlaceMarker = ({latitude, longitude, marker, content}) => {
                             variant="outlined" 
                             size='small' 
                             startIcon={<HistoryIcon />}
-                            onClick={() => {setContent(content); setOpenStreetDetails(true); setContentSelector('historia')}}
+                            onClick={() => {setContent(content); setOpenStreetDetails(true); setContentSelector('historia'), setPlaceID(placeID)}}
                         > 
                             História 
                         </Button>
@@ -32,7 +32,7 @@ const PlaceMarker = ({latitude, longitude, marker, content}) => {
                             variant="outlined" 
                             size='small' 
                             startIcon={<DescriptionIcon />}
-                            onClick={() => {setContent(content); setOpenStreetDetails(true); setContentSelector('descricao')}}
+                            onClick={() => {setContent(content); setOpenStreetDetails(true); setContentSelector('descricao'); setPlaceID(placeID)}}
                         > 
                             Descrição 
                         </Button>
@@ -59,6 +59,7 @@ PlaceMarker.propTypes = {
         title: PropTypes.string,
         description: PropTypes.string
     },
-    content: PropTypes.object
+    content: PropTypes.object,
+    placeID: PropTypes.string,
 
 }

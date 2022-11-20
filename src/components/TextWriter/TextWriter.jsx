@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Box, TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle,
         FormControl, FormLabel, RadioGroup, FormControlLabel, Radio} from '@mui/material';
 import PropTypes from 'prop-types';
+import addNewText from '../../helpers/addNewText';
 
-
-const TextWriter = ({open, setOpen, contentSelector}) => {
+const TextWriter = ({open, setOpen, contentSelector, placeID}) => {
 
     const [ radioValue, setRadioValue ] = useState('')
 
@@ -17,8 +17,11 @@ const TextWriter = ({open, setOpen, contentSelector}) => {
         const category = radioValue;
         const author = form.newTextAuthor.value;
         const content = form.newTextContent.value;
+        const role = 'Editor'
 
-        // setOpen(false)
+        addNewText(contentSelector, placeID, author, role, category, content)
+
+        setOpen(false)
     }
 
     return (
@@ -97,5 +100,6 @@ TextWriter.propTypes = {
     open: PropTypes.bool,
     setOpen: PropTypes.func,
     contentSelector: PropTypes.string,
+    placeID: PropTypes.string,
 
 }

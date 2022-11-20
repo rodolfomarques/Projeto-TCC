@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import addLocation from '../../helpers/addLocation'
 
 
-const NewPlaceForm = ({open, setOpen, userLatitude, userLongitude, setLocations}) => {
+const NewPlaceForm = ({open, setOpen, userLatitude, userLongitude}) => {
 
     const handleClose = () => { setOpen(false) };
     
@@ -17,7 +17,7 @@ const NewPlaceForm = ({open, setOpen, userLatitude, userLongitude, setLocations}
         const description = form.newPlaceFormDescription.value
         const marker = {title, description}
 
-        addLocation(setLocations, userLatitude, userLongitude, marker)
+        addLocation(userLatitude, userLongitude, marker)
         setOpen(false)
 
     }
@@ -41,7 +41,7 @@ const NewPlaceForm = ({open, setOpen, userLatitude, userLongitude, setLocations}
                         <TextField
                             required
                             id="newPlaceFormDescription"
-                            label="Breve Descrição"
+                            label="Fale sobre o nome da rua"
                             multiline
                             rows={4}
                         />
@@ -61,7 +61,6 @@ export default NewPlaceForm
 NewPlaceForm.propTypes = {
     userLatitude: PropTypes.number, 
     userLongitude: PropTypes.number, 
-    setLocations: PropTypes.func,
     open: PropTypes.bool,
     setOpen: PropTypes.func,
 }
