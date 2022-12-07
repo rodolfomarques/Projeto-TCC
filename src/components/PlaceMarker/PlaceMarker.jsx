@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useRef, useEffect } from 'react';
 import { Typography, Box, Button } from '@mui/material';
 import { Marker, Popup } from 'react-leaflet';
 import { ComponentContext } from '../../pages/Home/Home';
@@ -24,7 +24,13 @@ const PlaceMarker = ({latitude, longitude, marker, content, placeID}) => {
                             variant="outlined" 
                             size='small' 
                             startIcon={<HistoryIcon />}
-                            onClick={() => {setContent(content); setOpenStreetDetails(true); setContentSelector('historia'), setPlaceID(placeID)}}
+                            onClick={() => {
+                                setContent(content); 
+                                setOpenStreetDetails(true); 
+                                setContentSelector('historia'), 
+                                setPlaceID(placeID)
+                                
+                            }}
                         > 
                             História 
                         </Button>
@@ -32,7 +38,12 @@ const PlaceMarker = ({latitude, longitude, marker, content, placeID}) => {
                             variant="outlined" 
                             size='small' 
                             startIcon={<DescriptionIcon />}
-                            onClick={() => {setContent(content); setOpenStreetDetails(true); setContentSelector('descricao'); setPlaceID(placeID)}}
+                            onClick={() => {
+                                setContent(content); 
+                                setOpenStreetDetails(true); 
+                                setContentSelector('descricao'); 
+                                setPlaceID(placeID)
+                            }}
                         > 
                             Descrição 
                         </Button>

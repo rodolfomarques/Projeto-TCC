@@ -7,7 +7,6 @@ import addNewText from '../../helpers/addNewText';
 const TextWriter = ({open, setOpen, contentSelector, placeID}) => {
 
     const [ radioValue, setRadioValue ] = useState('')
-
     const handleClose = () => { setOpen(false) };
 
     const handleSubmit = (e) => {

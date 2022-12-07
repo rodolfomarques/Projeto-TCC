@@ -3,10 +3,10 @@ import MicIcon from '@mui/icons-material/Mic';
 import TextFormatIcon from '@mui/icons-material/TextFormat';
 import PropTypes from 'prop-types';
 
-const AddContentBar = ({setOpenRecorder, setOpenWriter}) => {
+const AddContentBar = ({setOpenRecorder, setOpenWriter, setOpenDetails}) => {
 
-    const openRecorder = () => {setOpenRecorder(true)}
-    const openWriter = () => {setOpenWriter(true)}
+    const openRecorder = () => {setOpenRecorder(true); setOpenDetails(false)}
+    const openWriter = () => {setOpenWriter(true); setOpenDetails(false)}
 
     return (
         <>
@@ -26,6 +26,7 @@ AddContentBar.propTypes = {
 
     setOpenRecorder: PropTypes.func,
     setOpenWriter: PropTypes.func,
+    setOpenDetails: PropTypes.func,
     
 }
 

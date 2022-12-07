@@ -2,6 +2,8 @@ import { useState, useEffect, createContext, lazy, Suspense  } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import { appRoutineLocationStarter } from '../../helpers/appRoutineLocationStarter';
 import loadInicialData from '../../helpers/loadInitialData';
+import TextWriter from '../../components/TextWriter/TextWriter';
+import AudioRecorder from '../../components/AudioRecorder/AudioRecorder';
 
 const SpeedDialButton = lazy(() => import('../../components/Layout/SpeedDialButton'));
 const MyLocationSpot = lazy(() => import('../../components/MyLocationSpot/MyLocationSpot'));
@@ -20,9 +22,10 @@ const Home = () => {
     const [ openNewPlaceForm, setOpenNewPlaceForm ] = useState(false);
     const [ openStreetDetails, setOpenStreetDetails ] = useState(false);
     const [ contentSelector, setContentSelector ] = useState('');
-    const [ content, setContent ] = useState({})
-    const [ placeID, setPlaceID ] = useState('')
-    const [ reload, setReload ] =  useState('')
+    const [ content, setContent ] = useState({});
+    const [ placeID, setPlaceID ] = useState('');
+    const [ openAudioRecorder, setOpenAudioRecorder ] = useState(false);
+    const [ openWriter, setOpenWriter] = useState(false);
 
     useEffect(() => {
 
@@ -37,8 +40,10 @@ const Home = () => {
         setContentSelector,
         setContent,
         setPlaceID,
-        reload, 
-        setReload,
+        openAudioRecorder, 
+        setOpenAudioRecorder, 
+        openWriter, 
+        setOpenWriter 
     }
 
     return (
@@ -66,6 +71,8 @@ const Home = () => {
                         }
                         <NewPlaceForm open={openNewPlaceForm} setOpen={setOpenNewPlaceForm} userLatitude={userLatitude} userLongitude={userLongitude} />
                         <StreetDetails open={openStreetDetails} setOpen={setOpenStreetDetails} contentSelector={contentSelector} content={content} placeID={placeID} />
+                        <AudioRecorder open={openAudioRecorder} setOpen={setOpenAudioRecorder} contentSelector={contentSelector} placeID={placeID} />
+                        <TextWriter open={openWriter} setOpen={setOpenWriter} contentSelector={contentSelector} placeID={placeID} />
                         <SpeedDialButton />
                 </Suspense>
             </MapContainer>

@@ -1,58 +1,84 @@
 import { useRef, useEffect, useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box } from '@mui/material';
-import { Recorder } from 'react-voice-recorder';
+import { Button, Dialog, DialogActions, DialogContent, 
+         DialogTitle, Box, FormControl, FormLabel, RadioGroup, 
+         FormControlLabel, Radio, TextField, Divider } from '@mui/material';
+
 import PropTypes from 'prop-types';
-import 'react-voice-recorder/dist/index.css';
+import uploadAudio from '../../helpers/uploadAudio';
 
-const AudioRecorder = ({open, setOpen}) => {
+import { FiberManualRecord, Stop } from '@mui/icons-material';
 
-    const descriptionElementRef = useRef(null);
-    const [ audioState, setAudioState ] = useState({
-        audioDetails:
-        {
-            url: null,
-            blob: null,
-            chunks: null,
-            duration: {
-                h: null,
-                m: null,
-                s: null,
-            }
+const AudioRecorder = ({open, setOpen, contentSelector, placeID}) => {
+
+    const [ radioValue, setRadioValue ] = useState('');
+    const [ mediaObject, setMediaObject ] = useState(null);
+    const [ recorder, setRecorder ] = useState({});
+    const [ audio, setAudio ] = useState(null);
+    const audioPlayer = useRef(null);
+
+    const handleClose = () => { setOpen(false) };
+
+    const startRecorder = () => { recorder.start() }
+    const stopRecorder = () => { recorder.stop() }
+
+    const onSubmitForm = (e) => {
+
+        e.preventDefault();
+
+        const form = document.forms.newAudioForm;
+        const author = form.newAudioAuthor.value;
+        const category = radioValue;
+        const role = "Editor"
+        audio
+
+        if(audio!== null && category !== '') {
+            uploadAudio(contentSelector, placeID, author, role, category,audio)
         }
-    });
+
+    }
     
+    useEffect(() => {
+
+        if(open){
+
+            navigator.mediaDevices.getUserMedia({audio:true})
+            .then(mediaStreamObj => { setMediaObject(mediaStreamObj) })
+            .catch(err => {console.log(err.name, err.message) })
+
+        }
+
+    },[open])
 
     useEffect(() => {
-    if (open) {
-        const { current: descriptionElement } = descriptionElementRef;
-        if (descriptionElement !== null) {
-        descriptionElement.focus();
-        }
-    }
-    }, [open])
 
+        if(open) {
+
+            const audioPreviewPlayer = audioPlayer.current
+            if( mediaObject !== null) {
     
-    const handleClose = () => { setOpen(false) };
-    const handleAudioStop = (data) => { setAudioState({ audioDetails: data }) }
-    const handleAudioUpload = (file) => { 
+                const mediaRecorder = new MediaRecorder(mediaObject);
+                let audioData = [];
+    
+                mediaRecorder.ondataavailable = (e) => { audioData.push(e.data) }
+    
+                mediaRecorder.onstop = () => {
+    
+                    let audioFile = new Blob(audioData, { 'type': 'audio/mp3;' });
+                    setAudio(audioFile);
+                    audioData = [];
 
-        const audio = new File(file, 'teste')
-        
-    }
-
-    const handleReset = () => {
-        const reset = {
-            url: null,
-            blob: null,
-            chunks: null,
-            duration: {
-                h: null,
-                m: null,
-                s: null,
+                    let audioSrc = window.URL.createObjectURL(audioFile);
+                    audioPreviewPlayer.src = audioSrc;
+                }
+                
+                setRecorder(mediaRecorder);
             }
+
         }
-        setAudioState({ audioDetails: reset });
-    }
+
+
+    }, [mediaObject])
+
 
     return (
 
@@ -62,18 +88,87 @@ const AudioRecorder = ({open, setOpen}) => {
             aria-labelledby="scroll-dialog-title"
             aria-describedby="scroll-dialog-description"
         >
-            <Box sx={{width: '350px'}}>
-                <Recorder
-                    record={true}
-                    title={"New recording"}
-                    audioURL={audioState.audioDetails.url}
-                    hideHeader ={true}
-                    showUIAudio
-                    handleAudioStop={data => handleAudioStop(data)}
-                    // handleCountDown={data => handleCountDown(data)}
-                    handleAudioUpload={data => handleAudioUpload(data)}
-                    handleRest={() => {handleReset()}}
-                />
+            <Box component='form' id='newAudioForm' onSubmit={(e) => {onSubmitForm(e)}}>
+                <DialogTitle>Gravador</DialogTitle>
+                <DialogContent>
+                    <Box sx={{pt:1, pb:1}}>
+                        <TextField
+                            required
+                            id="newAudioAuthor"
+                            label="Autor"
+                            fullWidth
+                        />
+                    </Box>
+                        <FormControl>
+                            <Divider sx={{mt: 2, mb:1}}>
+                                <FormLabel>Categoria</FormLabel>
+                            </Divider>
+                            <RadioGroup
+                                aria-labelledby="categorias"
+                                name="radio-buttons-group"
+                                id='newAudioCategory'
+                                value={radioValue}
+                                onChange={(e) => setRadioValue(e.target.value)}
+                            >
+                                {
+                                    contentSelector === 'historia' && (
+                                        <>
+                                            <FormControlLabel value="Pessoas Envolvidas" control={<Radio />} label="Pessoas envolvidas com o lugar" />
+                                            <FormControlLabel value="Elementos Naturais" control={<Radio />} label="Elementos presentes no ambiente natural." />
+                                            <FormControlLabel value="Elementos Construídos" control={<Radio />} label="Elementos construídos no lugar" />
+                                        </>
+                                    )
+                                }
+                                
+                                {
+                                    contentSelector === 'descricao' && (
+                                        <>
+                                            <FormControlLabel value="Ocupações anteriores" control={<Radio />} label="Ocupações anteriores" />
+                                            <FormControlLabel value="Materiais do local" control={<Radio />} label="Materiais que constituem os elementos do lugar" />
+                                            <FormControlLabel value="Técnicas de Construção" control={<Radio />} label="Técnicas utilizadas na construção" />
+                                            <FormControlLabel value="Medidas aproximadas" control={<Radio />} label="Medidas aproximadas" />
+                                            <FormControlLabel value="Atividades Realizadas" control={<Radio />} label="Principais atividades realizadas" />
+                                            <FormControlLabel value="Cuidados Necessários" control={<Radio />} label="Responsáveis e os cuidados cuidados necessários" />
+                                            <FormControlLabel value="Manutenção" control={<Radio />} label="Estado atual do local" />
+                                        </>
+                                    )
+                                }
+                            
+                            </RadioGroup>
+                        </FormControl>
+                        <Divider sx={{mt: 2, mb:2}} />
+                        
+                        <Box sx={{display:'flex', flexDirection:'column', alignItems: 'center', gap:2}}>
+                            <audio controls ref={audioPlayer}></audio>
+                            <Box sx={{display:'flex', gap: 2, justifyContent: 'center'}}>
+                                <Button 
+                                    aria-label="Gravar" 
+                                    color='error' 
+                                    startIcon={<FiberManualRecord size="large" />}
+                                    variant='contained'
+                                    size="small"
+                                    onClick={startRecorder}
+                                >
+                                    Gravar
+                                </Button>
+                                <Button 
+                                    aria-label="Parar Gravação" 
+                                    // color='info' 
+                                    startIcon={<Stop size="large" />} 
+                                    variant='contained'
+                                    size="small"
+                                    onClick={stopRecorder}
+                                >
+                                    Parar Gravação
+                                </Button>
+                            </Box>
+
+                        </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant='contained' type='submit'>Enviar</Button>
+                    <Button variant='contained' color='error'>Cancelar</Button>
+                </DialogActions>
             </Box>
         </Dialog>
 
@@ -87,4 +182,7 @@ export default AudioRecorder
 AudioRecorder.propTypes = {
     open: PropTypes.bool, 
     setOpen: PropTypes.func,
+    contentSelector: PropTypes.string,
+    placeID: PropTypes.string,
+
 }

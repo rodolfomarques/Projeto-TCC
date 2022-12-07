@@ -1,4 +1,4 @@
-import db from "../services/firebase";
+import { db } from "../services/firebase";
 import { ref, onValue } from 'firebase/database';
 
 const loadInicialData = (setLocations) => {

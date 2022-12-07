@@ -1,12 +1,27 @@
+import { useEffect, useState } from 'react';
 import { Box, Typography, Card, CardContent, IconButton } from '@mui/material';
-import PropTypes from 'prop-types';
 import { Pause, PlayArrow } from '@mui/icons-material';
+import { storage } from '../../services/firebase';
+import { ref, getDownloadURL } from "firebase/storage";
+import PropTypes from 'prop-types';
 
 const AudioDisplayCard = ({autor, papel, timestamp, audio, category}) => {
 
-    const audioSource = new Audio(audio);
+    const [ audioURl, setAudioURL ] = useState('')
+
+    const audioSource = new Audio(audioURl);
     const playAudio = (sound) => { sound.play() }
     const pauseAudio = (sound) => { sound.pause() }
+
+    useEffect(() => {
+
+        getDownloadURL(ref(storage, audio))
+        .then((url) => { setAudioURL(url); console.log(url); })
+        .catch((err) => {
+            console.log(err);
+        });
+
+    }, [])
 
     return (
         <Card className="audioCard">
