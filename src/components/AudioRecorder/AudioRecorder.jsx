@@ -5,6 +5,8 @@ import { Button, Dialog, DialogActions, DialogContent,
 
 import PropTypes from 'prop-types';
 import uploadAudio from '../../helpers/uploadAudio';
+import Lottie from "lottie-react";
+import recordingAnimation from '../../assets/images/recording_animation.json'
 
 import { FiberManualRecord, Stop } from '@mui/icons-material';
 
@@ -15,11 +17,12 @@ const AudioRecorder = ({open, setOpen, contentSelector, placeID}) => {
     const [ recorder, setRecorder ] = useState({});
     const [ audio, setAudio ] = useState(null);
     const audioPlayer = useRef(null);
+    const lottieRef = useRef();
 
     const handleClose = () => { setOpen(false) };
 
-    const startRecorder = () => { recorder.start() }
-    const stopRecorder = () => { recorder.stop() }
+    const startRecorder = () => { recorder.start(); lottieRef.current.play() }
+    const stopRecorder = () => { recorder.stop(); lottieRef.current.stop() }
 
     const onSubmitForm = (e) => {
 
@@ -33,6 +36,7 @@ const AudioRecorder = ({open, setOpen, contentSelector, placeID}) => {
 
         if(audio!== null && category !== '') {
             uploadAudio(contentSelector, placeID, author, role, category,audio)
+            handleClose()
         }
 
     }
@@ -139,6 +143,12 @@ const AudioRecorder = ({open, setOpen, contentSelector, placeID}) => {
                         <Divider sx={{mt: 2, mb:2}} />
                         
                         <Box sx={{display:'flex', flexDirection:'column', alignItems: 'center', gap:2}}>
+                            <Lottie 
+                                animationData={recordingAnimation}
+                                style={{height: '150px', width: '150px', margin: '-40px 0px'}}
+                                autoplay={false}
+                                lottieRef={lottieRef}
+                            />
                             <audio controls ref={audioPlayer}></audio>
                             <Box sx={{display:'flex', gap: 2, justifyContent: 'center'}}>
                                 <Button 
@@ -167,7 +177,7 @@ const AudioRecorder = ({open, setOpen, contentSelector, placeID}) => {
                 </DialogContent>
                 <DialogActions>
                     <Button variant='contained' type='submit'>Enviar</Button>
-                    <Button variant='contained' color='error'>Cancelar</Button>
+                    <Button variant='contained' color='error' onClick={handleClose}>Cancelar</Button>
                 </DialogActions>
             </Box>
         </Dialog>

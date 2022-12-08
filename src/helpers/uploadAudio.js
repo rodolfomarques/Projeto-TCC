@@ -26,8 +26,9 @@ export default async function uploadAudio(type, placeID, author, role, category,
 
         const dbText = await get(dbRef(db, `${type}/audioContent`))
         .then(snapshot => snapshot.val())
-
+        
         set(dbRef(db, `${type}/audioContent`), [...dbText, newAudio])
+
     });
 
 } 
