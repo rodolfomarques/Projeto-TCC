@@ -16,10 +16,8 @@ const AudioDisplayCard = ({autor, papel, timestamp, audio, category}) => {
     useEffect(() => {
 
         getDownloadURL(ref(storage, audio))
-        .then((url) => { setAudioURL(url); console.log(url); })
-        .catch((err) => {
-            console.log(err);
-        });
+        .then((url) => { setAudioURL(url) })
+        .catch((err) => { console.log(err) });
 
     }, [])
 

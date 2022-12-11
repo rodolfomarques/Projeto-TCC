@@ -24,6 +24,7 @@ const Home = () => {
     const [ contentSelector, setContentSelector ] = useState('');
     const [ content, setContent ] = useState({});
     const [ placeID, setPlaceID ] = useState('');
+    const [ placeName, setPlaceName ] = useState('')
     const [ openAudioRecorder, setOpenAudioRecorder ] = useState(false);
     const [ openWriter, setOpenWriter] = useState(false);
 
@@ -43,7 +44,9 @@ const Home = () => {
         openAudioRecorder, 
         setOpenAudioRecorder, 
         openWriter, 
-        setOpenWriter 
+        setOpenWriter,
+        placeName,
+        setPlaceName
     }
 
     return (

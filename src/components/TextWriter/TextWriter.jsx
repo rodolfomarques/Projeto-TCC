@@ -61,7 +61,7 @@ const TextWriter = ({open, setOpen, contentSelector, placeID}) => {
                                             <FormControlLabel value="Técnicas de Construção" control={<Radio />} label="Técnicas utilizadas na construção" />
                                             <FormControlLabel value="Medidas aproximadas" control={<Radio />} label="Medidas aproximadas" />
                                             <FormControlLabel value="Atividades Realizadas" control={<Radio />} label="Principais atividades realizadas" />
-                                            <FormControlLabel value="Cuidados Necessários" control={<Radio />} label="Responsáveis e os cuidados cuidados necessários" />
+                                            <FormControlLabel value="Cuidados Necessários" control={<Radio />} label="Responsáveis e os cuidados necessários" />
                                             <FormControlLabel value="Manutenção" control={<Radio />} label="Estado atual do local" />
                                         </>
                                     )

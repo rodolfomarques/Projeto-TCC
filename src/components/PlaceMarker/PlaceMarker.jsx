@@ -1,4 +1,4 @@
-import { useContext, useRef, useEffect } from 'react';
+import { useContext } from 'react';
 import { Typography, Box, Button } from '@mui/material';
 import { Marker, Popup } from 'react-leaflet';
 import { ComponentContext } from '../../pages/Home/Home';
@@ -11,7 +11,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 
 const PlaceMarker = ({latitude, longitude, marker, content, placeID}) => {
 
-    const { setOpenStreetDetails, setContentSelector, setContent, setPlaceID } = useContext(ComponentContext)
+    const { setOpenStreetDetails, setContentSelector, setContent, setPlaceID, setPlaceName } = useContext(ComponentContext)
 
     return (
         <Marker position={[latitude, longitude]} icon={leafleatIcon(pinLocation, 35, 35, 'place_icon')}>
@@ -29,7 +29,7 @@ const PlaceMarker = ({latitude, longitude, marker, content, placeID}) => {
                                 setOpenStreetDetails(true); 
                                 setContentSelector('historia'), 
                                 setPlaceID(placeID)
-                                
+                                setPlaceName(marker.title)
                             }}
                         > 
                             História 
@@ -43,6 +43,7 @@ const PlaceMarker = ({latitude, longitude, marker, content, placeID}) => {
                                 setOpenStreetDetails(true); 
                                 setContentSelector('descricao'); 
                                 setPlaceID(placeID)
+                                setPlaceName(marker.title)
                             }}
                         > 
                             Descrição 

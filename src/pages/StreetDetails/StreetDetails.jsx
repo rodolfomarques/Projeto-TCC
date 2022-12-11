@@ -5,24 +5,24 @@ import { ComponentContext } from '../Home/Home';
 import TextDisplayCard from '../../components/TextDisplayCard/TextDisplayCard';
 import AudioDisplayCard from '../../components/AudioDisplayCard/AudioDisplayCard';
 import AddContentBar from '../../components/AddContentBar/AddContentBar';
-import AudioRecorder from '../../components/AudioRecorder/AudioRecorder';
-import TextWriter from '../../components/TextWriter/TextWriter';
 import PropTypes from 'prop-types';
 
 
-const StreetDetails = ({open, setOpen, contentSelector, content, placeID}) => {
+const StreetDetails = ({open, setOpen, contentSelector, content }) => {
 
-    const {openAudioRecorder, setOpenAudioRecorder, openWriter, setOpenWriter } = useContext(ComponentContext);
+    const {setOpenAudioRecorder, setOpenWriter, placeName } = useContext(ComponentContext);
     const handleClose = () => { setOpen(false); };
     const descriptionElementRef = useRef(null);
     
     useEffect(() => {
-    if (open) {
-        const { current: descriptionElement } = descriptionElementRef;
-        if (descriptionElement !== null) {
-        descriptionElement.focus();
+
+        if (open) {
+            const { current: descriptionElement } = descriptionElementRef;
+            if (descriptionElement !== null) {
+            descriptionElement.focus();
+            }
         }
-    }
+
     }, [open])
 
  
@@ -36,7 +36,7 @@ const StreetDetails = ({open, setOpen, contentSelector, content, placeID}) => {
             aria-labelledby="scroll-dialog-title"
             aria-describedby="scroll-dialog-description"
         >
-            <DialogTitle id="scroll-dialog-title">Busto de Tamandaré</DialogTitle>
+            <DialogTitle id="scroll-dialog-title">{placeName}</DialogTitle>
             <DialogContent dividers={scroll === 'paper'}>
                 <article>
                     {/* galeria de imagens */}
@@ -45,6 +45,12 @@ const StreetDetails = ({open, setOpen, contentSelector, content, placeID}) => {
                     {contentSelector === 'historia' && (
                         <section>
                             <h3>História</h3>
+
+                            {
+                                (content.historia.textContent.length === 0 && content.historia.audioContent.length === 0) && (
+                                <p>Não há conteúdos para essa sessão</p>)
+                            }
+
                             {
                                 content.historia.textContent.map((text, i) => {
                                     return (
@@ -59,6 +65,7 @@ const StreetDetails = ({open, setOpen, contentSelector, content, placeID}) => {
                                     )
                                 })
                             }
+
                             {
                                 content.historia.audioContent.map((audio, i) => {
                                     return (
@@ -79,11 +86,18 @@ const StreetDetails = ({open, setOpen, contentSelector, content, placeID}) => {
                     {contentSelector === 'descricao' && (
                         <section>
                             <h3>Descrição</h3>
+
+                            {
+                                (content.descricao.textContent.length === 0 && content.descricao.audioContent.length === 0) && (
+                                <p>Não há conteúdos para essa sessão</p>)
+                            }
+
                             {
                                 content.descricao.textContent.map((text, i) => {
                                     return (<TextDisplayCard key={`card-${i}`} autor={text.author} texto={text.content} category={text.category} papel={text.role} timestamp={text.timestamp} />)
                                 })
                             }
+
                             {
                                 content.descricao.audioContent.map((audio, i) => {
                                     return (<AudioDisplayCard key={`card-${i}`} autor={audio.author} audio={audio.content} category={audio.category} papel={audio.role} timestamp={audio.timestamp} />)
@@ -107,7 +121,7 @@ export default StreetDetails
 
 StreetDetails.propTypes = {
 
-    placeID: PropTypes.string,
+    placeName: PropTypes.string,
     open: PropTypes.bool,
     setOpen: PropTypes.func,
     contentSelector: PropTypes.string,

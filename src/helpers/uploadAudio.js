@@ -9,7 +9,7 @@ export default async function uploadAudio(type, placeID, author, role, category,
     let id = uuidv4()
     const storageRef = ref(storage, `${placeID}/${type}/${id}.mp3`);
 
-    uploadBytes(storageRef, file).then(async (snapshot) => {
+    uploadBytes(storageRef, file).then(async () => {
 
         const hoje = new Date()
 
@@ -26,8 +26,11 @@ export default async function uploadAudio(type, placeID, author, role, category,
 
         const dbText = await get(dbRef(db, `${type}/audioContent`))
         .then(snapshot => snapshot.val())
+        .catch(err => console.log('Erro no get => ',err))
         
-        set(dbRef(db, `${type}/audioContent`), [...dbText, newAudio])
+        return set(dbRef(db, `${type}/audioContent`), [...dbText, newAudio])
+        .then(() => true)
+        .catch(() => false)
 
     });
 

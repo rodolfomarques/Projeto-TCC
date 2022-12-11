@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, 
          DialogTitle, Box, FormControl, FormLabel, RadioGroup, 
-         FormControlLabel, Radio, TextField, Divider } from '@mui/material';
+         FormControlLabel, Radio, TextField, Divider, CircularProgress } from '@mui/material';
 
 import PropTypes from 'prop-types';
 import uploadAudio from '../../helpers/uploadAudio';
@@ -16,6 +16,7 @@ const AudioRecorder = ({open, setOpen, contentSelector, placeID}) => {
     const [ mediaObject, setMediaObject ] = useState(null);
     const [ recorder, setRecorder ] = useState({});
     const [ audio, setAudio ] = useState(null);
+    const [ loading, setLoading ] = useState(false);
     const audioPlayer = useRef(null);
     const lottieRef = useRef();
 
@@ -27,6 +28,7 @@ const AudioRecorder = ({open, setOpen, contentSelector, placeID}) => {
     const onSubmitForm = (e) => {
 
         e.preventDefault();
+        setLoading(true)
 
         const form = document.forms.newAudioForm;
         const author = form.newAudioAuthor.value;
@@ -36,7 +38,8 @@ const AudioRecorder = ({open, setOpen, contentSelector, placeID}) => {
 
         if(audio!== null && category !== '') {
             uploadAudio(contentSelector, placeID, author, role, category,audio)
-            handleClose()
+            .then(() => { handleClose(); })
+            .catch(() => { setLoading(false) })
         }
 
     }
@@ -103,45 +106,46 @@ const AudioRecorder = ({open, setOpen, contentSelector, placeID}) => {
                             fullWidth
                         />
                     </Box>
-                        <FormControl>
-                            <Divider sx={{mt: 2, mb:1}}>
-                                <FormLabel>Categoria</FormLabel>
-                            </Divider>
-                            <RadioGroup
-                                aria-labelledby="categorias"
-                                name="radio-buttons-group"
-                                id='newAudioCategory'
-                                value={radioValue}
-                                onChange={(e) => setRadioValue(e.target.value)}
-                            >
-                                {
-                                    contentSelector === 'historia' && (
-                                        <>
-                                            <FormControlLabel value="Pessoas Envolvidas" control={<Radio />} label="Pessoas envolvidas com o lugar" />
-                                            <FormControlLabel value="Elementos Naturais" control={<Radio />} label="Elementos presentes no ambiente natural." />
-                                            <FormControlLabel value="Elementos Construídos" control={<Radio />} label="Elementos construídos no lugar" />
-                                        </>
-                                    )
-                                }
-                                
-                                {
-                                    contentSelector === 'descricao' && (
-                                        <>
-                                            <FormControlLabel value="Ocupações anteriores" control={<Radio />} label="Ocupações anteriores" />
-                                            <FormControlLabel value="Materiais do local" control={<Radio />} label="Materiais que constituem os elementos do lugar" />
-                                            <FormControlLabel value="Técnicas de Construção" control={<Radio />} label="Técnicas utilizadas na construção" />
-                                            <FormControlLabel value="Medidas aproximadas" control={<Radio />} label="Medidas aproximadas" />
-                                            <FormControlLabel value="Atividades Realizadas" control={<Radio />} label="Principais atividades realizadas" />
-                                            <FormControlLabel value="Cuidados Necessários" control={<Radio />} label="Responsáveis e os cuidados cuidados necessários" />
-                                            <FormControlLabel value="Manutenção" control={<Radio />} label="Estado atual do local" />
-                                        </>
-                                    )
-                                }
+                    <FormControl>
+                        <Divider sx={{mt: 2, mb:1}}>
+                            <FormLabel>Categoria</FormLabel>
+                        </Divider>
+                        <RadioGroup
+                            aria-labelledby="categorias"
+                            name="radio-buttons-group"
+                            id='newAudioCategory'
+                            value={radioValue}
+                            onChange={(e) => setRadioValue(e.target.value)}
+                        >
+                            {
+                                contentSelector === 'historia' && (
+                                    <>
+                                        <FormControlLabel value="Pessoas Envolvidas" control={<Radio />} label="Pessoas envolvidas com o lugar" />
+                                        <FormControlLabel value="Elementos Naturais" control={<Radio />} label="Elementos presentes no ambiente natural." />
+                                        <FormControlLabel value="Elementos Construídos" control={<Radio />} label="Elementos construídos no lugar" />
+                                    </>
+                                )
+                            }
                             
-                            </RadioGroup>
-                        </FormControl>
-                        <Divider sx={{mt: 2, mb:2}} />
+                            {
+                                contentSelector === 'descricao' && (
+                                    <>
+                                        <FormControlLabel value="Ocupações anteriores" control={<Radio />} label="Ocupações anteriores" />
+                                        <FormControlLabel value="Materiais do local" control={<Radio />} label="Materiais que constituem os elementos do lugar" />
+                                        <FormControlLabel value="Técnicas de Construção" control={<Radio />} label="Técnicas utilizadas na construção" />
+                                        <FormControlLabel value="Medidas aproximadas" control={<Radio />} label="Medidas aproximadas" />
+                                        <FormControlLabel value="Atividades Realizadas" control={<Radio />} label="Principais atividades realizadas" />
+                                        <FormControlLabel value="Cuidados Necessários" control={<Radio />} label="Responsáveis e os cuidados necessários" />
+                                        <FormControlLabel value="Manutenção" control={<Radio />} label="Estado atual do local" />
+                                    </>
+                                )
+                            }
                         
+                        </RadioGroup>
+                    </FormControl>
+                    <Divider sx={{mt: 2, mb:2}} />
+                    
+                    {!loading && (
                         <Box sx={{display:'flex', flexDirection:'column', alignItems: 'center', gap:2}}>
                             <Lottie 
                                 animationData={recordingAnimation}
@@ -172,9 +176,13 @@ const AudioRecorder = ({open, setOpen, contentSelector, placeID}) => {
                                     Parar Gravação
                                 </Button>
                             </Box>
-
                         </Box>
+                    )}
+
                 </DialogContent>
+
+                { loading && ( <CircularProgress color="success" /> ) }
+
                 <DialogActions>
                     <Button variant='contained' type='submit'>Enviar</Button>
                     <Button variant='contained' color='error' onClick={handleClose}>Cancelar</Button>
